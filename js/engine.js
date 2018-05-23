@@ -13,6 +13,25 @@
  * writing app.js a little simpler to work with.
  */
 
+// helper constants
+var BRICK_GRASS = 'g',
+    BRICK_WATER = 'w',
+    BRICK_STONE = 's';
+
+var brickSprites = {};
+brickSprites[BRICK_GRASS] = 'images/grass-block.png';
+brickSprites[BRICK_STONE] = 'images/stone-block.png';
+brickSprites[BRICK_WATER] = 'images/water-block.png';
+
+var GRID_SPRITE_WIDTH = 101;
+var GRID_SPRITE_HEIGHT = 83;
+
+var GRID_WIDTH = 5;
+var GRID_HEIGHT = 6;
+
+var scoreElem = document.createElement('div')
+scoreElem.setAttribute('class', 'score');
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -24,9 +43,23 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+    // way to easy change and represnt stage map 
+    var stageMap = [
+        ['w', 'w', 'w', 'w', 'w'],
+        ['s', 's', 'g', 's', 's'],
+        ['s', 's', 'g', 's', 's'],
+        ['s', 's', 'g', 's', 's'],
+        ['g', 'g', 'g', 'g', 'g'],
+        ['g', 'g', 'g', 'g', 'g'],
+    ];
+    
+
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
+    doc.body.appendChild(scoreElem);
+
+
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -79,7 +112,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        scoreElem.innerText = 'Score: '+player.score;
     }
 
     /* This is called by the update function and loops through all of the
@@ -106,35 +139,16 @@ var Engine = (function(global) {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
          */
-        var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
-            ],
-            numRows = 6,
-            numCols = 5,
-            row, col;
+        var row, col;
         
         // Before drawing, clear existing canvas
         ctx.clearRect(0,0,canvas.width,canvas.height)
 
-        /* Loop through the number of rows and columns we've defined above
-         * and, using the rowImages array, draw the correct image for that
-         * portion of the "grid"
-         */
-        for (row = 0; row < numRows; row++) {
-            for (col = 0; col < numCols; col++) {
-                /* The drawImage function of the canvas' context element
-                 * requires 3 parameters: the image to draw, the x coordinate
-                 * to start drawing and the y coordinate to start drawing.
-                 * We're using our Resources helpers to refer to our images
-                 * so that we get the benefits of caching these images, since
-                 * we're using them over and over.
-                 */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+        // chaned grid drawing logic 
+        // to use stage map - possiblilty to implement different levels
+        for (row = 0; row < stageMap.length; row++) {
+            for (col = 0; col < stageMap[row].length; col++) {
+                ctx.drawImage(Resources.get(brickSprites[stageMap[row][col]]), col * GRID_SPRITE_WIDTH, row * GRID_SPRITE_HEIGHT);
             }
         }
 

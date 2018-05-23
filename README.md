@@ -1,3 +1,13 @@
+# Arcade Game - frontend nano degree
+
+## Setup instructions
+
+- Download package / clone this respository
+- Open file: index.html with browser 
+
+
+## ORIGINAL README
+
 frontend-nanodegree-arcade-game
 ===============================
 
